@@ -34,6 +34,7 @@ public class LoginServlet extends HttpServlet {
         if (user != null && user.isEnabled() && userDAO.verifyPassword(username, password)) {
             HttpSession session = req.getSession();
             session.setAttribute("user", user);
+            session.setAttribute("role", user.getRole());
             session.setAttribute("successMessage", "ログインしました。"); // セッションに格納
 
             // 管理者の場合

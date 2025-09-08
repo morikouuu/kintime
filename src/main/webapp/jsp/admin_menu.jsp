@@ -6,7 +6,8 @@
 <head>
 <meta charset="UTF-8">
 <title>管理者メニュー</title>
-<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/style.css">
 </head>
 <body>
 	<div class="container">
@@ -14,8 +15,10 @@
 		<p>ようこそ, ${user.username}さん (管理者)</p>
 
 		<div class="main-nav">
-			<a href="attendance?action=filter">勤怠履歴管理</a> <a
-				href="users?action=list">ユーザー管理</a> <a href="logout">ログアウト</a>
+			<a href="attendance?action=filter">勤怠履歴管理</a>
+			<a href="users?action=list">ユーザー管理</a> 
+			<a href="${pageContext.request.contextPath}/paidleave/admin/list">有給申請管理</a>
+			<a href="logout">ログアウト</a>
 		</div>
 
 		<c:if test="${not empty sessionScope.successMessage}">
@@ -148,8 +151,12 @@ ${entry.key}: <c:forEach begin="1" end="${entry.value}">■</c:forEach> ${entry.
 			</p>
 			<div class="button-group">
 				<input type="submit" value="追加">
+
+
 			</div>
+
 		</form>
+
 	</div>
 </body>
 </html>

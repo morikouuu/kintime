@@ -65,6 +65,9 @@
         <div class="button-group">
             <a href="${pageContext.request.contextPath}/logout" class="button secondary">ログアウト</a>
         </div>
+        <div class="button-group">
+            <a href="${pageContext.request.contextPath}/paidleave/apply">有給申請</a>
+        </div>
     </div>
 </body>
 </html>
