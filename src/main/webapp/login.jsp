@@ -9,7 +9,7 @@
 </head> 
 <body> 
     <div class="container"> 
-        <h1>勤怠管理システム</h1> 
+        <h1>勤怠管理システム:</h1> 
         <form action="login" method="post"> 
             <p> 
                 <label for="username">ユーザーID:</label> 
