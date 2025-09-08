@@ -19,12 +19,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import com.example.attendance.dao.AttendanceDAO;
+import com.example.attendance.dao.NotificationDAO;
 import com.example.attendance.dto.Attendance;
 import com.example.attendance.dto.User;
 @WebServlet("/attendance")
 public class AttendanceServlet extends HttpServlet {
 
     private final AttendanceDAO attendanceDAO = new AttendanceDAO();
+    private final NotificationDAO notificationDAO = new NotificationDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -38,6 +40,10 @@ public class AttendanceServlet extends HttpServlet {
         }
 
         User user = (User) session.getAttribute("user");
+        List<String> notices = notificationDAO.fetchAndClear(user.getUsername());
+        if (!notices.isEmpty()) {
+            req.setAttribute("notifications", notices);
+        }
 
         // 成功メッセージの表示処理
         String message = (String) session.getAttribute("successMessage");
@@ -252,4 +258,5 @@ public class AttendanceServlet extends HttpServlet {
         if (value == null || value.isEmpty()) return null;
         return LocalDateTime.parse(value);
     }
+    
 }

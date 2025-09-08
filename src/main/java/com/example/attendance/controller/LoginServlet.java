@@ -63,18 +63,15 @@ public class LoginServlet extends HttpServlet {
 
             } else {
                 // 一般従業員の場合
-                req.setAttribute("attendanceRecords",
-                        attendanceDAO.findByUserId(user.getUsername()));
-
-                RequestDispatcher rd = req.getRequestDispatcher("/jsp/employee_menu.jsp");
-                rd.forward(req, resp);
+            	resp.sendRedirect(req.getContextPath() + "/attendance");
             }
 
         } else {
-            // ログイン失敗時
-            req.setAttribute("errorMessage", "ユーザーIDまたはパスワードが不正です。またはアカウントが無効です。");
+        	req.setAttribute("errorMessage", "ユーザーIDまたはパスワードが不正です。");  // リクエスト属性にセット
+            // sendRedirect ではなく forward で同じリクエストを /login.jsp に渡す
             RequestDispatcher rd = req.getRequestDispatcher("/login.jsp");
             rd.forward(req, resp);
+            return;
         }
     }
 }
