@@ -16,7 +16,7 @@
 
 		<div class="main-nav">
 			<a href="attendance?action=filter">勤怠履歴管理</a>
-			<a href="users?action=list">ユーザー管理</a> 
+			<a href="${pageContext.request.contextPath}/users">ユーザー管理</a> 
 			<a href="${pageContext.request.contextPath}/paidleave/admin/list">有給申請管理</a>
 			<a href="${pageContext.request.contextPath}/logout"
 				class="button secondary">ログアウト</a>

@@ -14,9 +14,24 @@ public class UserDAO {
 
     static {
         // Sample users with hashed passwords
-        users.put("employee1", new User("employee1", hashPassword("password"), "employee", true));
-        users.put("admin1", new User("admin1", hashPassword("adminpass"), "admin", true));
-        users.put("employee2", new User("employee2", hashPassword("password"), "employee", true));
+        users.put("employee1", new User("employee1", hashPassword("password"), "employee", true,20));
+        users.put("admin1", new User("admin1", hashPassword("adminpass"), "admin", true,10));
+        users.put("employee2", new User("employee2", hashPassword("password"), "employee", true,10));
+    }
+    public void updateRemainingDays(String username, int remainingDays) {
+        User user = users.get(username);
+        if (user != null) {
+            users.put(
+                username,
+                new User(
+                    user.getUsername(),
+                    user.getPassword(),
+                    user.getRole(),
+                    user.isEnabled(),
+                    remainingDays       
+                )
+            );
+        }
     }
 
     public User findByUsername(String username) {
@@ -55,7 +70,8 @@ public class UserDAO {
                     user.getUsername(),
                     hashPassword(newPassword),
                     user.getRole(),
-                    user.isEnabled()
+                    user.isEnabled() ,
+                    user.getRemainingDays()
                 )
             );
         }
@@ -70,7 +86,8 @@ public class UserDAO {
                     user.getUsername(),
                     user.getPassword(),
                     user.getRole(),
-                    enabled
+                    enabled ,
+                    user.getRemainingDays()
                 )
             );
         }

@@ -13,97 +13,138 @@ import jakarta.servlet.http.HttpSession;
 
 import com.example.attendance.dao.UserDAO;
 import com.example.attendance.dto.User;
+
 @WebServlet("/users")
 public class UserServlet extends HttpServlet {
-	private final UserDAO userDAO = new UserDAO();
+    private final UserDAO userDAO = new UserDAO();
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		String action = req.getParameter("action");
-		HttpSession session = req.getSession(false);
-		User currentUser = (User) session.getAttribute("user");
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        String action  = req.getParameter("action");
+        HttpSession session = req.getSession(false);
+        User currentUser = (User) session.getAttribute("user");
 
-		if (currentUser == null || !"admin".equals(currentUser.getRole())) {
-			resp.sendRedirect("login.jsp");
-			return;
-		}
+        if (currentUser == null || !"admin".equals(currentUser.getRole())) {
+            resp.sendRedirect("login.jsp");
+            return;
+        }
 
-		// Retrieve and clear message from session 
-		String message = (String) session.getAttribute("successMessage");
-		if (message != null) {
-			req.setAttribute("successMessage", message);
-			session.removeAttribute("successMessage");
-		}
-		if ("list".equals(action) || action == null) {
-			Collection<User> users = userDAO.getAllUsers();
-			req.setAttribute("users", users);
-			RequestDispatcher rd = req.getRequestDispatcher("/jsp/user_management.jsp");
-			rd.forward(req, resp);
-		} else if ("edit".equals(action)) {
-			String username = req.getParameter("username");
-			User user = userDAO.findByUsername(username);
-			req.setAttribute("userToEdit", user);
-			Collection<User> users = userDAO.getAllUsers();
-			req.setAttribute("users", users);
-			RequestDispatcher rd = req.getRequestDispatcher("/jsp/user_management.jsp");
-			rd.forward(req, resp);
-		} else {
-			resp.sendRedirect("users?action=list");
-		}
-	}
+        // メッセージ取得＆クリア
+        String success = (String) session.getAttribute("successMessage");
+        if (success != null) {
+            req.setAttribute("successMessage", success);
+            session.removeAttribute("successMessage");
+        }
+        String error = (String) session.getAttribute("errorMessage");
+        if (error != null) {
+            req.setAttribute("errorMessage", error);
+            session.removeAttribute("errorMessage");
+        }
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		req.setCharacterEncoding("UTF-8");
-		String action = req.getParameter("action");
-		HttpSession session = req.getSession(false);
-		User currentUser = (User) session.getAttribute("user");
+        // 編集モードなら対象ユーザーをセット
+        if ("edit".equals(action)) {
+            String username = req.getParameter("username");
+            User userToEdit = userDAO.findByUsername(username);
+            req.setAttribute("userToEdit", userToEdit);
+        }
 
-		if (currentUser == null || !"admin".equals(currentUser.getRole())) {
-			resp.sendRedirect("login.jsp");
-			return;
-		}
+        // 一覧用リストを常にセット
+        Collection<User> users = userDAO.getAllUsers();
+        req.setAttribute("users", users);
 
-		if ("add".equals(action)) {
-			String username = req.getParameter("username");
-			String password = req.getParameter("password");
-			String role = req.getParameter("role");
-			if (userDAO.findByUsername(username) == null) {
-				userDAO.addUser(new User(username,
-						UserDAO.hashPassword(password), role));
-				session.setAttribute("successMessage", "ユーザーを追加しました");
-			} else {
-				req.setAttribute("errorMessage", "ユーザーIDは既に存在します。");
-			}
-		} else if ("update".equals(action)) {
-			String username = req.getParameter("username");
-			String role = req.getParameter("role");
-			boolean enabled = req.getParameter("enabled") != null;
+        RequestDispatcher rd = req.getRequestDispatcher("/jsp/user_management.jsp");
+        rd.forward(req, resp);
+    }
 
-			User existingUser = userDAO.findByUsername(username);
-			if (existingUser != null) {
-				userDAO.updateUser(new User(username,
-						existingUser.getPassword(), role, enabled));
-				session.setAttribute("successMessage", "ユーザー情報を更新しました。");
-			}
-		} else if ("delete".equals(action)) {
-			String username = req.getParameter("username");
-			userDAO.deleteUser(username);
-			session.setAttribute("successMessage", "ユーザーを削除しました。");
-		} else if ("reset_password".equals(action)) {
-			String username = req.getParameter("username");
-			String newPassword = req.getParameter("newPassword");
-			userDAO.resetPassword(username, newPassword);
-			session.setAttribute("successMessage", username + "のパスワードをリセットしました。(デフォルトパスワード: " + newPassword + ")");
-		} else if ("toggle_enabled".equals(action)) {
-			String username = req.getParameter("username");
-			boolean enabled = Boolean.parseBoolean(req.getParameter("enabled"));
-			userDAO.toggleUserEnabled(username, enabled);
-			session.setAttribute("successMessage", username + " のアカウントを"
-					+ (enabled ? "有効" : "無効") + "にしました。");
-		}
-		resp.sendRedirect("users?action=list");
-	}
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        String action  = req.getParameter("action");
+        HttpSession session = req.getSession(false);
+        User currentUser = (User) session.getAttribute("user");
+
+        if (currentUser == null || !"admin".equals(currentUser.getRole())) {
+            resp.sendRedirect("login.jsp");
+            return;
+        }
+
+        if ("add".equals(action)) {
+            String username   = req.getParameter("username");
+            String password   = req.getParameter("password");
+            String role       = req.getParameter("role");
+            int    remainingDays = parseInt(req.getParameter("remainingDays"), 0);
+
+            if (userDAO.findByUsername(username) == null) {
+                userDAO.addUser(new User(
+                    username,
+                    UserDAO.hashPassword(password),
+                    role,
+                    true,
+                    remainingDays
+                ));
+                session.setAttribute("successMessage", "ユーザーを追加しました");
+            } else {
+                session.setAttribute("errorMessage", "ユーザーIDは既に存在します。");
+            }
+
+        } else if ("update".equals(action)) {
+            String  username      = req.getParameter("username");
+            String  role          = req.getParameter("role");
+            boolean enabled       = req.getParameter("enabled") != null;
+            String  rdParam       = req.getParameter("remainingDays");
+
+            User existingUser = userDAO.findByUsername(username);
+            if (existingUser != null) {
+                // ← ここで remainingDays を取得＆既存値フォールバック
+                int remainingDays = parseInt(rdParam, existingUser.getRemainingDays());
+
+                // ← ５引数版コンストラクタを呼ぶ
+                userDAO.updateUser(new User(
+                    username,
+                    existingUser.getPassword(),
+                    role,
+                    enabled,
+                    remainingDays
+                ));
+                session.setAttribute("successMessage", "ユーザー情報を更新しました。");
+            }
+
+        } else if ("delete".equals(action)) {
+            String username = req.getParameter("username");
+            userDAO.deleteUser(username);
+            session.setAttribute("successMessage", "ユーザーを削除しました。");
+
+        } else if ("reset_password".equals(action)) {
+            String username    = req.getParameter("username");
+            String newPassword = req.getParameter("newPassword");
+            userDAO.resetPassword(username, newPassword);
+            session.setAttribute("successMessage",
+                username + " のパスワードをリセットしました。(新パスワード: " + newPassword + ")");
+
+        } else if ("toggle_enabled".equals(action)) {
+            String  username = req.getParameter("username");
+            boolean enabled  = Boolean.parseBoolean(req.getParameter("enabled"));
+            userDAO.toggleUserEnabled(username, enabled);
+            session.setAttribute("successMessage",
+                username + " のアカウントを"
+                + (enabled ? "有効化" : "無効化") + "しました。");
+        }
+
+        resp.sendRedirect("users?action=list");
+    }
+
+    /**
+     * 文字列を int にパースし、空文字や例外時は defaultValue を返す
+     */
+    private int parseInt(String str, int defaultValue) {
+        try {
+            return (str != null && !str.isEmpty())
+                ? Integer.parseInt(str)
+                : defaultValue;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
 }

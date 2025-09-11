@@ -4,21 +4,41 @@ public class User {
 	private String username;
 	private String password;
 	private String role;
-	
+	private int remainingDays;
 	private boolean enabled;
-	public User(String username,String password,String role) {
+	
+	public User(String username, String password, String role, boolean enabled, int remainingDays) {
 		this.username = username;
 		this.password = password;
 		this.role = role;
+		this.enabled = enabled;
+		this.remainingDays = remainingDays;
+
 	}
+
+	public User(String username,
+            String password,
+            String role,
+            int remainingDays) {
+    this(username, password, role, true, remainingDays);
+}
+
+/** 新規追加用（enabled=true、remainingDays=0） */
+public User(String username,
+            String password,
+            String role) {
+    this(username, password, role, true, 0);
+}
+
 	
-	public User(String username, String password, String role, boolean
-			enabled) {
-			this.username = username;
-			this.password = password;
-			this.role = role;
-			this.enabled = enabled;
-			}
+
+	public int getRemainingDays() {
+		return remainingDays;
+	}
+
+	public void setRemainingDays(int remainingDays) {
+		this.remainingDays = remainingDays;
+	}
 
 	public String getUsername() {
 		return username;
@@ -51,7 +71,5 @@ public class User {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
-	
-	
 
 }

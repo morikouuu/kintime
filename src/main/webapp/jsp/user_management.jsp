@@ -27,56 +27,53 @@
 		<h2>ユーザー追加/編集</h2>
 		<form action="users" method="post" class="user-form">
 			<input type="hidden" name="action"
-				value="<c:choose><c:when test="${userToEdit != 
-null}">update</c:when><c:otherwise>add</c:otherwise></c:choose>">
+				value="<c:choose><c:when test="${userToEdit != null}">update</c:when><c:otherwise>add</c:otherwise></c:choose>">
 			<c:if test="${userToEdit != null}">
 				<input type="hidden" name="username" value="${userToEdit.username}">
 			</c:if>
 
 			<label for="username">ユーザーID:</label> <input type="text"
 				id="username" name="username"
-				value="<c:out 
-value="${userToEdit.username}"/>"
+				value="<c:out value="${userToEdit.username}"/>"
 				<c:if test="${userToEdit != null}">readonly</c:if> required>
 			<label for="password">パスワード:</label> <input type="password"
 				id="password" name="password"
-				<c:if test="${userToEdit == 
-null}">required</c:if>>
+				<c:if test="${userToEdit == null}">required</c:if>>
 			<c:if test="${userToEdit != null}">
 				<p class="error-message">※編集時はパスワードは変更されません。リセットする場
 					合は別途操作してください。</p>
 			</c:if>
 
-			<label for="role">役割:</label> <select id="role" name="role" required>
+			<label for="role">役割:</label> 
+			<select id="role" name="role" required>
 				<option value="employee"
-					<c:if test="${userToEdit.role == 
-'employee'}">selected</c:if>>従業員</option>
+					<c:if test="${userToEdit.role == 'employee'}">selected</c:if>>従業員</option>
 				<option value="admin"
-					<c:if test="${userToEdit.role == 
-'admin'}">selected</c:if>>管理者</option>
+					<c:if test="${userToEdit.role == 'admin'}">selected</c:if>>管理者</option>
 			</select>
 
 			<p>
 				<label for="enabled">アカウント有効:</label> <input type="checkbox"
 					id="enabled" name="enabled" value="true"
-					<c:if 
-test="${userToEdit == null || userToEdit.enabled}">checked</c:if>>
+					<c:if test="${userToEdit == null || userToEdit.enabled}">checked</c:if>>
 			</p>
+			
+			<label for="remainingDays">残有給日数:</label>
+      		<input type="number" id="remainingDays" name="remainingDays" min="0"
+             value="<c:out value='${not empty userToEdit ? userToEdit.remainingDays : 0}'/>"
+             required />
 
 			<div class="button-group">
 				<input type="submit"
-					value="<c:choose><c:when test="${userToEdit != null}">更
-新</c:when><c:otherwise>追加</c:otherwise></c:choose>">
+					value="<c:choose><c:when test="${userToEdit != null}">更新</c:when><c:otherwise>追加</c:otherwise></c:choose>">
 				<c:if test="${userToEdit != null}">
 					<form action="users" method="post" style="display: inline;">
 						<input type="hidden" name="action" value="reset_password">
 						<input type="hidden" name="username"
 							value="${userToEdit.username}"> <input type="hidden"
 							name="newPassword" value="password"> <input type="submit"
-							value="パスワードリセット" class="button 
-secondary"
-							onclick="return confirm('本当にパスワードをリセットしますか？（デフォルトパスワー
-ド: password）');">
+							value="パスワードリセット" class="button secondary"
+							onclick="return confirm('本当にパスワードをリセットしますか？（デフォルトパスワード: password）');">
 					</form>
 				</c:if>
 			</div>
@@ -91,7 +88,9 @@ secondary"
 					<th>ユーザーID</th>
 					<th>役割</th>
 					<th>有効</th>
+					<th>有給残日数</th>
 					<th>操作</th>
+					
 				</tr>
 			</thead>
 			<tbody>
@@ -110,6 +109,7 @@ secondary"
 									onclick="return confirm('本当にこのユーザーを<c:choose><c:when test="${u.enabled}">無効</c:when><c:otherwise>有効</c:otherwise></c:choose>にしますか？');">
 							</form>
 						</td>
+						<td>${u.remainingDays}</td>
 						<td class="table-actions"><a
 							href="users?action=edit&username=${u.username}" class="button">
 								編集</a>
