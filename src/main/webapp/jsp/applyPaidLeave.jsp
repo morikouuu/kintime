@@ -1,5 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+
 <html>
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/style.css">
 <head><title>有給申請画面</title></head>
 <body>
   <h2>有給申請</h2>

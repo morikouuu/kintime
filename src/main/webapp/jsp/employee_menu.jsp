@@ -8,42 +8,7 @@
 <title>従業員メニュー</title>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/style.css">
-<style>
-.container {
-	max-width: 800px;
-	margin: 20px auto;
-}
 
-.button-group {
-	margin: 10px 0;
-}
-
-table {
-	width: 100%;
-	border-collapse: collapse;
-}
-
-th, td {
-	border: 1px solid #ccc;
-	padding: 8px;
-	text-align: center;
-}
-
-.success-message {
-	color: green;
-}
-
-.button {
-	padding: 6px 12px;
-	text-decoration: none;
-	border: 1px solid #333;
-	background-color: #eee;
-	margin-right: 5px;
-}
-
-.button.secondary {
-	background-color: #ccc;
-}
 </style>
 </head>
 <body>

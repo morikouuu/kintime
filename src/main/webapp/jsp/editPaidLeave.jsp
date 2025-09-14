@@ -1,6 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <html>
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/style.css">
 <head><title>申請編集</title></head>
 <body>
   <h2>有給申請 編集</h2>
