@@ -4,8 +4,8 @@
 <head><title>申請編集</title></head>
 <body>
   <h2>有給申請 編集</h2>
-  <c:if test="${not empty error}">
-    <p style="color:red">${error}</p>
+  <c:if test="${not empty errorMessage}">
+    <p style="color:red">${errorMessage}</p>
   </c:if>
   <form action="${pageContext.request.contextPath}/paidleave/edit" method="post">
     <input type="hidden" name="id" value="${dto.id}"/>
