@@ -110,7 +110,10 @@ th, td {
 				class="button secondary">ログアウト</a>
 		</div>
 		<div class="button-group">
-			<a href="${pageContext.request.contextPath}/paidleave/apply">有給申請</a>
+			<a href="${pageContext.request.contextPath}/paidleave/apply"
+				class="button"> 有給申請 </a> <a
+				href="${pageContext.request.contextPath}/paidleave/list"
+				class="button"> 有給申請一覧 </a>
 		</div>
 	</div>
 </body>
